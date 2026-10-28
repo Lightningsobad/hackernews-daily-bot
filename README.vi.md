@@ -44,7 +44,7 @@ Sau khi đẩy mã nguồn lên GitHub repository của bạn:
    - `TELEGRAM_BOT_TOKEN`: Token lấy từ BotFather.
    - `TELEGRAM_CHAT_ID`: ID kênh/nhóm hoặc chat cá nhân của bạn.
    - `GEMINI_API_KEY`: API Key lấy từ Google AI Studio.
-4. *(Tùy chọn)* Nếu muốn đổi model AI sang phiên bản khác (mặc định là `gemini-2.5-flash`), bạn có thể vào tab **Variables** bên cạnh -> Thêm variable `GEMINI_MODEL` (ví dụ `gemini-2.0-flash` hoặc `gemini-1.5-flash`).
+4. *(Tùy chọn)* Nếu muốn đổi model AI sang phiên bản khác (mặc định là `gemini-3.8-flash`), bạn có thể vào tab **Variables** bên cạnh -> Thêm variable `GEMINI_MODEL` (ví dụ `gemini-3.5-flash-lite`).
 
 Bot sẽ tự động kích hoạt vào lúc **00:00 UTC (tức 07:00 sáng giờ Việt Nam)** mỗi ngày. Bạn cũng có thể kích hoạt chạy thử thủ công bất kỳ lúc nào bằng cách vào tab **Actions** trên GitHub -> Chọn workflow **Daily Hacker News Digest** -> Bấm **Run workflow**.
 
@@ -54,7 +54,7 @@ Bot sẽ tự động kích hoạt vào lúc **00:00 UTC (tức 07:00 sáng gi�
 
 Hệ thống được trang bị cơ chế tự động bảo vệ:
 - Nếu model được cấu hình (`GEMINI_MODEL`) bị Google ngừng hỗ trợ (deprecated) hoặc trả về lỗi 404, bot sẽ tự động đảo qua danh sách model dự phòng:
-  `gemini-2.5-flash` ➡️ `gemini-2.0-flash` ➡️ `gemini-1.5-flash`.
+  `gemini-3.8-flash` ➡️ `gemini-3.5-flash-lite`.
 - Nếu toàn bộ dịch vụ AI gặp sự cố ngắt kết nối, bot **vẫn gửi bản tin đầy đủ** với tiêu đề, điểm vote, link bài gốc và link thảo luận kèm dòng chú thích dự phòng, đảm bảo bạn không bao giờ bị gián đoạn bản tin buổi sáng.
 
 ---
