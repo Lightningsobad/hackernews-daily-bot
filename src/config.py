@@ -11,7 +11,7 @@ class Config:
     telegram_bot_token: str
     telegram_chat_id: str
     gemini_api_key: str
-    gemini_model: str = "gemini-2.5-flash"
+    gemini_model: str = "gemini-3.8-flash"
     max_stories: int = 5
     dry_run: bool = False
 
@@ -34,7 +34,7 @@ def load_config(env_file: str | None = None, dry_run: bool | None = None) -> Con
     telegram_bot_token = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
     telegram_chat_id = os.getenv("TELEGRAM_CHAT_ID", "").strip()
     gemini_api_key = os.getenv("GEMINI_API_KEY", "").strip()
-    gemini_model = os.getenv("GEMINI_MODEL", "gemini-2.5-flash").strip() or "gemini-2.5-flash"
+    gemini_model = os.getenv("GEMINI_MODEL", "gemini-3.8-flash").strip() or "gemini-3.8-flash"
 
     try:
         max_stories = int(os.getenv("MAX_STORIES", "5").strip())

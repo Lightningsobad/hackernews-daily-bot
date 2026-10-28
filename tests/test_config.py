@@ -6,7 +6,7 @@ def test_load_config_success(monkeypatch):
     monkeypatch.setenv("TELEGRAM_BOT_TOKEN", "fake_bot_token")
     monkeypatch.setenv("TELEGRAM_CHAT_ID", "-100123456789")
     monkeypatch.setenv("GEMINI_API_KEY", "fake_gemini_key")
-    monkeypatch.setenv("GEMINI_MODEL", "gemini-2.5-flash")
+    monkeypatch.setenv("GEMINI_MODEL", "gemini-3.8-flash")
     monkeypatch.setenv("MAX_STORIES", "5")
     monkeypatch.setenv("DRY_RUN", "false")
 
@@ -14,7 +14,7 @@ def test_load_config_success(monkeypatch):
     assert config.telegram_bot_token == "fake_bot_token"
     assert config.telegram_chat_id == "-100123456789"
     assert config.gemini_api_key == "fake_gemini_key"
-    assert config.gemini_model == "gemini-2.5-flash"
+    assert config.gemini_model == "gemini-3.8-flash"
     assert config.max_stories == 5
     assert config.dry_run is False
 
@@ -25,7 +25,7 @@ def test_load_config_default_model(monkeypatch):
     monkeypatch.delenv("GEMINI_MODEL", raising=False)
 
     config = load_config()
-    assert config.gemini_model == "gemini-2.5-flash"
+    assert config.gemini_model == "gemini-3.8-flash"
 
 def test_load_config_missing_secret_raises_error(monkeypatch):
     monkeypatch.delenv("TELEGRAM_BOT_TOKEN", raising=False)
