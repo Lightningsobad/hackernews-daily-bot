@@ -5,7 +5,7 @@ from typing import List
 
 logger = logging.getLogger(__name__)
 
-FALLBACK_MODELS = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"]
+FALLBACK_MODELS = ["gemini-3.8-flash", "gemini-3.5-flash-lite"]
 
 class ModelUnavailableError(Exception):
     """Raised when a specific Gemini model is deprecated, not found, or returns 404."""
@@ -88,7 +88,7 @@ def summarize_article(
     api_key: str,
     title: str,
     article_text: str,
-    preferred_model: str = "gemini-2.5-flash",
+    preferred_model: str = "gemini-3.8-flash",
 ) -> List[str]:
     """
     Summarize a tech article into 2-3 concise Vietnamese bullet points.

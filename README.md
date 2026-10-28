@@ -44,7 +44,7 @@ After pushing the repository to GitHub:
    - `TELEGRAM_BOT_TOKEN`: Token from BotFather.
    - `TELEGRAM_CHAT_ID`: Channel/group or user ID.
    - `GEMINI_API_KEY`: API Key from Google AI Studio.
-4. *(Optional)* To switch AI models (defaults to `gemini-2.5-flash`), go to the **Variables** tab -> Click **New repository variable** -> name `GEMINI_MODEL` (e.g., `gemini-2.0-flash` or `gemini-1.5-flash`).
+4. *(Optional)* To switch AI models (defaults to `gemini-3.8-flash`), go to the **Variables** tab -> Click **New repository variable** -> name `GEMINI_MODEL` (e.g., `gemini-3.5-flash-lite`).
 
 The bot triggers automatically via cron at **00:00 UTC (07:00 AM UTC+7)** daily. You can also trigger it manually anytime by navigating to the **Actions** tab -> Selecting **Daily Hacker News Digest** -> Clicking **Run workflow**.
 
@@ -54,7 +54,7 @@ The bot triggers automatically via cron at **00:00 UTC (07:00 AM UTC+7)** daily.
 
 The application features built-in self-healing and model cascade mechanisms:
 - If the configured model (`GEMINI_MODEL`) is deprecated or returns HTTP 404, the bot cascades through fallbacks:
-  `gemini-2.5-flash` ➡️ `gemini-2.0-flash` ➡️ `gemini-1.5-flash`.
+  `gemini-3.8-flash` ➡️ `gemini-3.5-flash-lite`.
 - If Google AI services experience complete network failure, the bot **still delivers the digest** with story titles, upvotes, direct links, and discussion links with an informative note—ensuring your morning updates are never interrupted.
 
 ---

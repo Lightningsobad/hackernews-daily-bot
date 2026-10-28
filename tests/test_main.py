@@ -5,7 +5,7 @@ def test_run_pipeline_dry_run_does_not_send_telegram(monkeypatch, capsys):
     monkeypatch.setenv("TELEGRAM_BOT_TOKEN", "fake_bot")
     monkeypatch.setenv("TELEGRAM_CHAT_ID", "-100")
     monkeypatch.setenv("GEMINI_API_KEY", "fake_gemini")
-    monkeypatch.setenv("GEMINI_MODEL", "gemini-2.5-flash")
+    monkeypatch.setenv("GEMINI_MODEL", "gemini-3.8-flash")
 
     mock_story = MagicMock(
         object_id="1",
