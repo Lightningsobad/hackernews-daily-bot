@@ -1,6 +1,9 @@
 from unittest.mock import patch, MagicMock
 from src.summarizer import summarize_article, ModelUnavailableError, FALLBACK_MODELS
 
+def test_fallback_models_configuration():
+    assert FALLBACK_MODELS == ["gemini-3.8-flash", "gemini-3.5-flash-lite"]
+
 def test_summarize_article_success():
     mock_text = "- Đây là bước đột phá mới về mô hình AI.\n- Cải thiện tốc độ suy luận gấp 2 lần."
     with patch("src.summarizer.call_gemini_single_model", return_value=mock_text):
@@ -8,7 +11,7 @@ def test_summarize_article_success():
             api_key="fake_key",
             title="Next Gen LLM Announced",
             article_text="Full article text...",
-            preferred_model="gemini-2.5-flash",
+            preferred_model="gemini-3.8-flash",
         )
     assert len(bullets) == 2
     assert "đột phá" in bullets[0]
@@ -35,6 +38,7 @@ def test_summarize_article_cascades_to_fallback_model_on_deprecation():
     assert "dự phòng" in bullets[0]
     assert call_records[0] == "deprecated-model"
     assert len(call_records) >= 2  # Proves cascade happened
+    assert call_records[1] == "gemini-3.8-flash"
 
 def test_summarize_article_fallback_when_empty_content():
     captured_prompts = []
@@ -48,7 +52,7 @@ def test_summarize_article_fallback_when_empty_content():
             api_key="fake_key",
             title="Show HN: A new compiler",
             article_text="",
-            preferred_model="gemini-2.5-flash",
+            preferred_model="gemini-3.8-flash",
         )
     assert len(bullets) >= 1
     assert "Show HN: A new compiler" in captured_prompts[0]
@@ -60,7 +64,7 @@ def test_summarize_article_zero_crash_on_total_ai_failure():
             api_key="fake_key",
             title="Important Python Update",
             article_text="Content...",
-            preferred_model="gemini-2.5-flash",
+            preferred_model="gemini-3.8-flash",
         )
     assert len(bullets) >= 1
     assert "Important Python Update" in bullets[0]
@@ -85,7 +89,7 @@ def test_call_gemini_single_model_uses_header_auth():
             status_code=200,
             json=lambda: {"candidates": [{"content": {"parts": [{"text": "result"}]}}]}
         )
-        call_gemini_single_model(api_key="secret-key-123", model="gemini-2.5-flash", prompt="Hello")
+        call_gemini_single_model(api_key="secret-key-123", model="gemini-3.8-flash", prompt="Hello")
         
         call_args = mock_post.call_args
         url = call_args[0][0]
