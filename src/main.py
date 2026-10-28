@@ -24,12 +24,12 @@ def run_pipeline(dry_run: bool = False) -> int:
 
     # Load configuration
     try:
-        config = load_config()
+        config = load_config(dry_run=dry_run)
     except ConfigError as e:
         logger.error(f"Configuration error: {e}")
         return 1
 
-    effective_dry_run = dry_run or config.dry_run
+    effective_dry_run = config.dry_run
 
     # Step 1: Fetch top stories from Hacker News
     logger.info(f"Fetching top {config.max_stories} stories from Hacker News...")
@@ -114,3 +114,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+

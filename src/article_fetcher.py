@@ -57,3 +57,4 @@ def fetch_article_text(url: str, timeout_seconds: int = 10) -> str:
     except Exception as e:
         logger.warning(f"Exception fetching article {url}: {e}")
         return ""
+

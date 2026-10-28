@@ -86,3 +86,4 @@ def fetch_top_stories(
     all_stories = list(stories_map.values())
     all_stories.sort(key=lambda s: s.points, reverse=True)
     return all_stories[:max_stories]
+

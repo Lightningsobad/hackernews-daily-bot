@@ -1,129 +1,99 @@
 # ⚡️ Hacker News AI & Programming Daily Telegram Digest Bot
 
-Một ứng dụng tự động hoá gọn nhẹ, chạy định kỳ hàng ngày hoàn toàn miễn phí trên **GitHub Actions** (chi phí server = 0đ) nhằm:
-1. Thu thập các bài viết nổi bật nhất về chủ đề **Trí tuệ nhân tạo (AI)** và **Lập trình (Programming)** trên Hacker News trong vòng 24 giờ qua.
-2. Tải nội dung bài viết và sử dụng **Google Gemini AI** để đọc hiểu, tóm tắt thành 2–3 gạch đầu dòng súc tích bằng tiếng Việt.
-3. Đóng gói và gửi bản tin tổng hợp đẹp mắt vào kênh hoặc nhóm Telegram của bạn vào 07:00 sáng mỗi ngày.
+<p align="center">
+  <strong>English</strong> | <a href="README.vi.md">Tiếng Việt</a>
+</p>
+
+A lightweight, automated daily digest bot running 100% free on **GitHub Actions** ($0 server cost):
+1. Curates top trending stories on **Artificial Intelligence (AI)** and **Programming** from Hacker News over the last 24 hours.
+2. Extracts full article content and leverages **Google Gemini AI** to produce concise 2–3 bullet point summaries.
+3. Formats and dispatches a clean, structured Telegram digest to your channel or group daily at 07:00 AM (UTC+7 / 00:00 UTC).
 
 ---
 
-## 🔒 Cơ chế Bảo mật Secrets khi Public Repository
-
-> [!IMPORTANT]
-> **Tuyệt đối KHÔNG BAO GIỜ commit token hoặc API key thật lên Git!**
-> Repository này được thiết kế để hoàn toàn an toàn kể cả khi bạn công khai (Public) mã nguồn trên GitHub:
-> 
-> 1. **Chặn tự động qua `.gitignore`**: File `.gitignore` đã được cấu hình chặn mọi file `.env`, `.env.*`, `*.env`. Git sẽ tự động bỏ qua và không bao giờ track các file này.
-> 2. **File mẫu `.env.example`**: Chỉ chứa các biến rỗng mẫu làm hướng dẫn, không chứa thông tin thật.
-> 3. **Lưu trữ trên GitHub Secrets**: Khi chạy tự động trên GitHub Actions, tất cả token/key được lưu trong hệ thống mã hoá **GitHub Repository Secrets**. Chỉ workflow được quyền truy cập tạm thời lúc chạy.
-
----
-
-## 🚀 Hướng dẫn Lấy các Thông tin Bí mật (Secrets)
+## 🚀 How to Obtain Required Secrets
 
 ### 1. `TELEGRAM_BOT_TOKEN`
-1. Mở Telegram, tìm kiếm bot chính thức **[@BotFather](https://t.me/BotFather)**.
-2. Gõ lệnh `/newbot`, đặt tên và username cho bot theo hướng dẫn.
-3. `@BotFather` sẽ gửi cho bạn một chuỗi token dạng: `123456789:ABCdefGhIJKlmNoPQRstuVWXyz`.
+1. Open Telegram and search for the official **[@BotFather](https://t.me/BotFather)**.
+2. Send `/newbot`, then follow the prompts to choose a display name and username.
+3. `@BotFather` will reply with your API token (e.g. `123456789:ABCdefGhIJKlmNoPQRstuVWXyz`).
 
 ### 2. `TELEGRAM_CHAT_ID`
-- **Gửi vào Kênh (Channel)** hoặc **Nhóm (Group)**:
-  1. Thêm bot bạn vừa tạo vào Kênh/Nhóm với quyền **Administrator** (quyển Post Messages).
-  2. Gửi một tin nhắn bất kỳ vào kênh.
-  3. Để lấy ID kênh: Bạn có thể thêm bot **[@userinfobot](https://t.me/userinfobot)** hoặc **[@getmyid_bot](https://t.me/getmyid_bot)** vào kênh để xem ID (thường bắt đầu bằng `-100...`, ví dụ `-1001234567890`).
-- **Gửi vào Chat Cá nhân**:
-  1. Mở chat với bot bạn vừa tạo, bấm `/start`.
-  2. Mở chat với **[@userinfobot](https://t.me/userinfobot)**, bot sẽ trả về `Id` cá nhân của bạn (dạng số nguyên dương, ví dụ `987654321`).
+- **Sending to a Channel or Group**:
+  1. Add your newly created bot to the Channel/Group as an **Administrator** with *Post Messages* permission.
+  2. Send any test message into the channel/group.
+  3. Get channel ID: Add **[@userinfobot](https://t.me/userinfobot)** or **[@getmyid_bot](https://t.me/getmyid_bot)** to check the ID (typically starts with `-100...`, e.g. `-1001234567890`).
+- **Sending to Personal Direct Messages**:
+  1. Open a chat with your bot and click `/start`.
+  2. Open a chat with **[@userinfobot](https://t.me/userinfobot)**, which will display your user ID (positive integer, e.g. `987654321`).
 
 ### 3. `GEMINI_API_KEY`
-1. Truy cập [Google AI Studio](https://aistudio.google.com/).
-2. Đăng nhập bằng tài khoản Google.
-3. Chọn **Get API Key** -> **Create API Key in new project**.
-4. Sao chép API key được cấp (hoàn toàn miễn phí, hạn mức 15 requests/phút).
+1. Go to [Google AI Studio](https://aistudio.google.com/).
+2. Sign in with your Google account.
+3. Click **Get API Key** -> **Create API Key in new project**.
+4. Copy the generated API key (free tier with 15 requests/minute).
 
 ---
 
-## ⚙️ Cấu hình trên GitHub (Để chạy tự động)
+## ⚙️ GitHub Configuration (Automated Execution)
 
-Sau khi đẩy mã nguồn lên GitHub repository của bạn:
-1. Truy cập vào GitHub Repo -> Chọn tab **Settings**.
-2. Ở thanh bên trái, chọn **Secrets and variables** -> Chọn **Actions**.
-3. Bấm **New repository secret** và thêm lần lượt 3 biến:
-   - `TELEGRAM_BOT_TOKEN`: Token lấy từ BotFather.
-   - `TELEGRAM_CHAT_ID`: ID kênh/nhóm hoặc chat cá nhân của bạn.
-   - `GEMINI_API_KEY`: API Key lấy từ Google AI Studio.
-4. *(Tùy chọn)* Nếu muốn đổi model AI sang phiên bản khác (mặc định là `gemini-2.5-flash`), bạn có thể vào tab **Variables** bên cạnh -> Thêm variable `GEMINI_MODEL` (ví dụ `gemini-2.0-flash` hoặc `gemini-1.5-flash`).
+After pushing the repository to GitHub:
+1. Open your repository -> Navigate to **Settings**.
+2. In the left sidebar, click **Secrets and variables** -> **Actions**.
+3. Click **New repository secret** and add these 3 secrets:
+   - `TELEGRAM_BOT_TOKEN`: Token from BotFather.
+   - `TELEGRAM_CHAT_ID`: Channel/group or user ID.
+   - `GEMINI_API_KEY`: API Key from Google AI Studio.
+4. *(Optional)* To switch AI models (defaults to `gemini-2.5-flash`), go to the **Variables** tab -> Click **New repository variable** -> name `GEMINI_MODEL` (e.g., `gemini-2.0-flash` or `gemini-1.5-flash`).
 
-Bot sẽ tự động kích hoạt vào lúc **00:00 UTC (tức 07:00 sáng giờ Việt Nam)** mỗi ngày. Bạn cũng có thể kích hoạt chạy thử thủ công bất kỳ lúc nào bằng cách vào tab **Actions** trên GitHub -> Chọn workflow **Daily Hacker News Digest** -> Bấm **Run workflow**.
+The bot triggers automatically via cron at **00:00 UTC (07:00 AM UTC+7)** daily. You can also trigger it manually anytime by navigating to the **Actions** tab -> Selecting **Daily Hacker News Digest** -> Clicking **Run workflow**.
 
 ---
 
-## 🛡️ Cơ chế Chống lỗi Model AI (Model Cascade)
+## 🛡️ Model Cascade Resilience
 
-Hệ thống được trang bị cơ chế tự động bảo vệ:
-- Nếu model được cấu hình (`GEMINI_MODEL`) bị Google ngừng hỗ trợ (deprecated) hoặc trả về lỗi 404, bot sẽ tự động đảo qua danh sách model dự phòng:
+The application features built-in self-healing and model cascade mechanisms:
+- If the configured model (`GEMINI_MODEL`) is deprecated or returns HTTP 404, the bot cascades through fallbacks:
   `gemini-2.5-flash` ➡️ `gemini-2.0-flash` ➡️ `gemini-1.5-flash`.
-- Nếu toàn bộ dịch vụ AI gặp sự cố ngắt kết nối, bot **vẫn gửi bản tin đầy đủ** với tiêu đề, điểm vote, link bài gốc và link thảo luận kèm dòng chú thích dự phòng, đảm bảo bạn không bao giờ bị gián đoạn bản tin buổi sáng.
+- If Google AI services experience complete network failure, the bot **still delivers the digest** with story titles, upvotes, direct links, and discussion links with an informative note—ensuring your morning updates are never interrupted.
 
 ---
 
-## 💻 Hướng dẫn Chạy Thử nghiệm tại Local
+## 💻 Local Development & Testing
 
-### 1. Chuẩn bị môi trường
+### 1. Set Up Environment
 ```bash
-# Khởi tạo môi trường ảo Python
+# Create virtual environment
 python -m venv .venv
 
-# Kích hoạt môi trường ảo:
-# Trên Windows PowerShell:
+# Activate virtual environment:
+# On Windows PowerShell:
 .venv\Scripts\Activate.ps1
-# Trên Linux/macOS:
+# On Linux/macOS:
 source .venv/bin/activate
 
-# Cài đặt thư viện
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-### 2. Thiết lập file cấu hình Local
-Tạo file `.env` từ file mẫu:
+### 2. Configure Local Environment Variables
+Create `.env` from the provided example template:
 ```bash
 cp .env.example .env
 ```
-Mở file `.env` và điền token/key của bạn. *(Lưu ý: File này đã được `.gitignore` chặn nên sẽ không bị commit)*.
+Open `.env` and fill in your credentials. *(Note: `.env` is ignored by `.gitignore` to prevent secret leaks)*.
 
-### 3. Chạy thử nghiệm
-- **Chạy chế độ thử nghiệm (Dry Run)**: Thu thập tin thật, gọi AI tóm tắt thật và in bản tin ra terminal, **không gửi tin nhắn đến Telegram**:
+### 3. Run Locally
+- **Dry Run Mode**: Fetches real stories, generates AI summaries, and prints the formatted digest to the terminal **without sending to Telegram**:
   ```bash
   python -m src.main --dry-run
   ```
-- **Chạy chế độ thật**: Gửi trực tiếp bản tin vào Telegram:
+- **Live Run Mode**: Fetches stories, summarizes, and sends directly to Telegram:
   ```bash
   python -m src.main
   ```
 
-### 4. Chạy bộ kiểm thử (Unit Tests)
+### 4. Run Test Suite
 ```bash
 pytest -v
-```
-
----
-
-## 📂 Cấu trúc Thư mục
-
-```text
-├── .github/workflows/
-│   └── daily_digest.yml      # GitHub Actions cron workflow
-├── src/
-│   ├── __init__.py
-│   ├── config.py             # Đọc và xác thực cấu hình biến môi trường
-│   ├── hn_client.py          # Lấy và lọc bài viết từ Algolia Search API
-│   ├── article_fetcher.py    # Tải và trích xuất nội dung bài viết gốc
-│   ├── summarizer.py         # Tóm tắt tiếng Việt với Gemini & Model Cascade
-│   ├── telegram_sender.py    # Định dạng HTML và gửi tin nhắn Telegram
-│   └── main.py               # Điểm điều phối toàn bộ pipeline & CLI dry-run
-├── tests/                    # Toàn bộ test suite đạt chuẩn TDD
-├── .env.example              # Mẫu biến môi trường an toàn
-├── .gitignore                # Chặn các file bí mật và thư viện tạm
-├── requirements.txt          # Danh sách thư viện Python
-└── README.md                 # Tài liệu hướng dẫn sử dụng
 ```

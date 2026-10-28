@@ -26,6 +26,23 @@ def test_format_digest_message_html_structure():
     # Check bullets
     assert "• Cải thiện tốc độ 30%" in chunk
 
+def test_format_digest_message_escapes_url_query_parameters():
+    stories = [
+        {
+            "title": "Article With Query Params",
+            "url": "https://example.com/post?id=123&utm_source=hackernews",
+            "points": 100,
+            "comments_count": 20,
+            "hn_url": "https://news.ycombinator.com/item?id=456&mode=flat",
+            "bullets": ["Bullet 1"]
+        }
+    ]
+    chunks = format_digest_message(stories, date_str="2026-10-28")
+    assert len(chunks) == 1
+    # & must be escaped as &amp; in href attributes
+    assert 'href="https://example.com/post?id=123&amp;utm_source=hackernews"' in chunks[0]
+    assert 'href="https://news.ycombinator.com/item?id=456&amp;mode=flat"' in chunks[0]
+
 def test_format_digest_message_chunking():
     # Create many stories with long content to force chunking (> 3800 chars)
     long_stories = []
@@ -65,3 +82,4 @@ def test_send_telegram_digest_failure():
             message_chunks=["Hello World"]
         )
     assert success is False
+

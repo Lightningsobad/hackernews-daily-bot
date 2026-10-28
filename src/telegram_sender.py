@@ -13,8 +13,8 @@ DEFAULT_SAFE_CHUNK_LIMIT = 3800
 def format_story_html(story: Dict[str, Any]) -> str:
     """Format a single story item into Telegram-compatible HTML."""
     title = html.escape(str(story.get("title", "No Title")))
-    url = story.get("url", "")
-    hn_url = story.get("hn_url", "")
+    url = html.escape(str(story.get("url", "")), quote=True)
+    hn_url = html.escape(str(story.get("hn_url", "")), quote=True)
     points = story.get("points", 0)
     comments_count = story.get("comments_count", 0)
     bullets = story.get("bullets", [])
@@ -108,3 +108,4 @@ def send_telegram_digest(
             time.sleep(0.5)
 
     return all_success
+

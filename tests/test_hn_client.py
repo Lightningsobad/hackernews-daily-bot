@@ -81,3 +81,4 @@ def test_fetch_top_stories_deduplication():
 
     assert len(stories) == 1
     assert stories[0].object_id == "301"
+

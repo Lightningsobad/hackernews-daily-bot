@@ -1,4 +1,4 @@
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 from src.summarizer import summarize_article, ModelUnavailableError, FALLBACK_MODELS
 
 def test_summarize_article_success():
@@ -64,3 +64,35 @@ def test_summarize_article_zero_crash_on_total_ai_failure():
         )
     assert len(bullets) >= 1
     assert "Important Python Update" in bullets[0]
+
+def test_clean_bullets_filters_conversational_preamble():
+    from src.summarizer import clean_bullets
+    raw = (
+        "Dưới đây là tóm tắt các điểm chính của bài viết:\n"
+        "- Điểm chính thứ nhất về kiến trúc hệ thống.\n"
+        "- Điểm chính thứ hai về hiệu năng thực tế.\n"
+        "Hy vọng tóm tắt này hữu ích!"
+    )
+    bullets = clean_bullets(raw)
+    assert len(bullets) == 2
+    assert "Điểm chính thứ nhất" in bullets[0]
+    assert "Điểm chính thứ hai" in bullets[1]
+
+def test_call_gemini_single_model_uses_header_auth():
+    from src.summarizer import call_gemini_single_model
+    with patch("requests.post") as mock_post:
+        mock_post.return_value = MagicMock(
+            status_code=200,
+            json=lambda: {"candidates": [{"content": {"parts": [{"text": "result"}]}}]}
+        )
+        call_gemini_single_model(api_key="secret-key-123", model="gemini-2.5-flash", prompt="Hello")
+        
+        call_args = mock_post.call_args
+        url = call_args[0][0]
+        headers = call_args[1].get("headers", {})
+        
+        # Verify API key is NOT in query param
+        assert "key=secret-key-123" not in url
+        # Verify API key IS in header
+        assert headers.get("x-goog-api-key") == "secret-key-123"
+

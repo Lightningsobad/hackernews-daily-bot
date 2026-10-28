@@ -19,8 +19,13 @@ def call_gemini_single_model(
 ) -> str:
     """
     Call Google Gemini REST API generateContent for a given model.
+    Sends API key in x-goog-api-key header for security.
     """
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+    headers = {
+        "x-goog-api-key": api_key,
+        "Content-Type": "application/json",
+    }
     payload = {
         "contents": [
             {
@@ -33,7 +38,7 @@ def call_gemini_single_model(
         },
     }
 
-    resp = requests.post(url, json=payload, timeout=timeout_seconds)
+    resp = requests.post(url, headers=headers, json=payload, timeout=timeout_seconds)
     if resp.status_code == 404:
         raise ModelUnavailableError(f"Model '{model}' not found or deprecated (HTTP 404).")
     
@@ -55,17 +60,28 @@ def call_gemini_single_model(
     return parts[0]["text"]
 
 def clean_bullets(raw_text: str) -> List[str]:
-    """Parse raw LLM output into clean bullet points."""
+    """Parse raw LLM output into clean bullet points, filtering out preambles."""
     lines = raw_text.strip().split("\n")
     bullets = []
     for line in lines:
         cleaned = line.strip()
         if not cleaned:
             continue
-        # Remove markdown bullet prefixes like -, *, •, or numbered items (1., 2.)
-        cleaned = re.sub(r"^(\s*[-*•]|\d+\.)\s*", "", cleaned).strip()
-        if cleaned:
-            bullets.append(cleaned)
+        # Drop conversational intro ending with colon (e.g. "Dưới đây là tóm tắt:")
+        if cleaned.endswith(":") and len(cleaned) < 80:
+            continue
+        # Check if line was originally a bullet item
+        has_bullet_prefix = bool(re.match(r"^(\s*[-*•]|\d+\.)\s*", cleaned))
+        stripped = re.sub(r"^(\s*[-*•]|\d+\.)\s*", "", cleaned).strip()
+        if not stripped:
+            continue
+        
+        # If line had bullet prefix, keep it. If no bullet prefix, ignore if conversational
+        if has_bullet_prefix:
+            bullets.append(stripped)
+        elif len(stripped) > 20 and not stripped.lower().startswith(("hy vọng", "chúc", "cảm ơn", "bài viết này")):
+            bullets.append(stripped)
+
     return bullets
 
 def summarize_article(
@@ -129,3 +145,4 @@ def summarize_article(
     # Zero-crash ultimate fallback
     logger.error(f"All Gemini models in cascade failed for article '{title}': {last_error}")
     return [f"Bài viết thảo luận về: {title} (Tóm tắt AI tạm thời không khả dụng)"]
+

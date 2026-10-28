@@ -19,3 +19,14 @@ def test_fetch_article_text_handles_http_error():
         mock_get.return_value = MagicMock(status_code=403, text="Forbidden")
         text = fetch_article_text("https://example.com/forbidden")
     assert text == ""
+
+def test_fetch_article_text_skips_non_html():
+    with patch("requests.get") as mock_get:
+        mock_get.return_value = MagicMock(
+            status_code=200,
+            headers={"Content-Type": "application/pdf"},
+            text="%PDF-1.5..."
+        )
+        text = fetch_article_text("https://example.com/paper.pdf")
+    assert text == ""
+

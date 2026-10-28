@@ -32,3 +32,4 @@ jobs:
           GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-2.5-flash' }}
           MAX_STORIES: 5
         run: python -m src.main
+

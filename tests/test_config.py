@@ -42,3 +42,4 @@ def test_gitignore_contains_sensitive_files():
         content = f.read()
     assert ".env" in content
     assert "*.env" in content or ".env*" in content
+
