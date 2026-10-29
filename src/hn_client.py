@@ -9,8 +9,10 @@ DEFAULT_KEYWORDS = [
     "LLM",
     "machine learning",
     "programming",
-    "Python",
-    "Rust",
+    "Flutter",
+    "Android",
+    "Kotlin",
+    "Java",
     "developer",
     "deep learning",
 ]
@@ -32,58 +34,62 @@ def fetch_top_stories(
     timeout_seconds: int = 15,
 ) -> List[HNStory]:
     """
-    Fetch and filter top upvoted Hacker News stories related to target keywords
-    from the last `hours_back` hours.
+    Fetch top Hacker News stories matching keywords, prioritizing active Front Page stories
+    at report time, falling back to recent stories from the last `hours_back` hours if needed.
     """
     if keywords is None:
         keywords = DEFAULT_KEYWORDS
 
     cutoff_timestamp = int(time.time()) - (hours_back * 3600)
     seen_ids = set()
-    stories_map = {}
 
-    for kw in keywords:
-        params = {
-            "tags": "story",
-            "query": kw,
-            "numericFilters": f"created_at_i>{cutoff_timestamp}",
-            "hitsPerPage": 50,
-        }
-        try:
-            resp = requests.get(ALGOLIA_SEARCH_URL, params=params, timeout=timeout_seconds)
-            if resp.status_code != 200:
-                continue
-            data = resp.json()
-        except Exception:
-            # Continue checking other keywords if one request fails
-            continue
-
-        hits = data.get("hits", [])
-        for hit in hits:
-            obj_id = str(hit.get("objectID") or "")
-            if not obj_id or obj_id in seen_ids:
+    def _query(tags: str, numeric_filters: Optional[str] = None) -> List[HNStory]:
+        results = []
+        for kw in keywords:
+            params = {
+                "tags": tags,
+                "query": kw,
+                "hitsPerPage": 50,
+            }
+            if numeric_filters:
+                params["numericFilters"] = numeric_filters
+            try:
+                resp = requests.get(ALGOLIA_SEARCH_URL, params=params, timeout=timeout_seconds)
+                if resp.status_code != 200:
+                    continue
+                data = resp.json()
+            except Exception:
                 continue
 
-            seen_ids.add(obj_id)
-            title = hit.get("title") or "No Title"
-            points = hit.get("points") or 0
-            comments_count = hit.get("num_comments") or 0
-            created_at = hit.get("created_at_i") or 0
-            hn_url = f"https://news.ycombinator.com/item?id={obj_id}"
-            url = hit.get("url") or hn_url
+            for hit in data.get("hits", []):
+                obj_id = str(hit.get("objectID") or "")
+                if not obj_id or obj_id in seen_ids:
+                    continue
 
-            story = HNStory(
-                object_id=obj_id,
-                title=title,
-                url=url,
-                points=points,
-                comments_count=comments_count,
-                hn_url=hn_url,
-                created_at=created_at,
-            )
-            stories_map[obj_id] = story
+                seen_ids.add(obj_id)
+                hn_url = f"https://news.ycombinator.com/item?id={obj_id}"
+                results.append(
+                    HNStory(
+                        object_id=obj_id,
+                        title=hit.get("title") or "No Title",
+                        url=hit.get("url") or hn_url,
+                        points=hit.get("points") or 0,
+                        comments_count=hit.get("num_comments") or 0,
+                        hn_url=hn_url,
+                        created_at=hit.get("created_at_i") or 0,
+                    )
+                )
+        results.sort(key=lambda s: s.points, reverse=True)
+        return results
 
-    all_stories = list(stories_map.values())
-    all_stories.sort(key=lambda s: s.points, reverse=True)
-    return all_stories[:max_stories]
+    # Priority 1: Stories currently active on the Hacker News Front Page
+    front_page_stories = _query(tags="front_page")
+    if len(front_page_stories) >= max_stories:
+        return front_page_stories[:max_stories]
+
+    # Priority 2: Fallback to recent 24h stories if front page has fewer matches
+    fallback_stories = _query(tags="story", numeric_filters=f"created_at_i>{cutoff_timestamp}")
+    combined = front_page_stories + fallback_stories
+    return combined[:max_stories]
+
 

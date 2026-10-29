@@ -26,6 +26,7 @@ jobs:
 
       - name: Run Hacker News Telegram Digest
         env:
+          TZ: 'Asia/Ho_Chi_Minh'
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

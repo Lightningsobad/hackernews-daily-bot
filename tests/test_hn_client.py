@@ -82,3 +82,64 @@ def test_fetch_top_stories_deduplication():
     assert len(stories) == 1
     assert stories[0].object_id == "301"
 
+def test_fetch_top_stories_queries_front_page():
+    mock_response = {
+        "hits": [
+            {
+                "objectID": "401",
+                "title": "Front Page AI",
+                "url": "https://example.com/front-ai",
+                "points": 300,
+                "num_comments": 40,
+                "created_at_i": 1700000500,
+            }
+        ]
+    }
+    with patch("requests.get") as mock_get:
+        mock_get.return_value = MagicMock(status_code=200, json=lambda: mock_response)
+        stories = fetch_top_stories(keywords=["AI"], max_stories=1)
+
+    assert len(stories) == 1
+    # Verify Algolia was queried with front_page tag for real-time trending
+    assert mock_get.call_args[1]["params"]["tags"] == "front_page"
+
+def test_fetch_top_stories_fallbacks_when_insufficient_front_page():
+    # First response for front_page returns 1 story
+    front_page_resp = {
+        "hits": [
+            {
+                "objectID": "501",
+                "title": "Front Page AI",
+                "url": "https://example.com/fp-ai",
+                "points": 300,
+                "num_comments": 40,
+                "created_at_i": 1700000500,
+            }
+        ]
+    }
+    # Second response for fallback story search returns additional 24h story
+    fallback_resp = {
+        "hits": [
+            {
+                "objectID": "502",
+                "title": "Recent 24h Story",
+                "url": "https://example.com/recent-ai",
+                "points": 500,
+                "num_comments": 60,
+                "created_at_i": 1700000400,
+            }
+        ]
+    }
+    with patch("requests.get") as mock_get:
+        mock_get.side_effect = [
+            MagicMock(status_code=200, json=lambda: front_page_resp),
+            MagicMock(status_code=200, json=lambda: fallback_resp),
+        ]
+        stories = fetch_top_stories(keywords=["AI"], max_stories=2)
+
+    assert len(stories) == 2
+    story_ids = {s.object_id for s in stories}
+    assert story_ids == {"501", "502"}
+
+
+
