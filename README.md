@@ -7,7 +7,7 @@
 A lightweight, automated daily digest bot running 100% free on **GitHub Actions** ($0 server cost):
 1. Curates top trending stories on **Artificial Intelligence (AI)** and **Programming** from Hacker News over the last 24 hours.
 2. Extracts full article content and leverages **Google Gemini AI** to produce concise 2–3 bullet point summaries.
-3. Formats and dispatches a clean, structured Telegram digest to your channel or group daily at 07:00 AM (UTC+7 / 00:00 UTC).
+3. Formats and dispatches a clean, structured Telegram digest to your channel or group daily at 07:17 AM (UTC+7 / 00:17 UTC).
 
 ---
 
@@ -46,7 +46,7 @@ After pushing the repository to GitHub:
    - `GEMINI_API_KEY`: API Key from Google AI Studio.
 4. *(Optional)* To switch AI models (defaults to `gemini-3.8-flash`), go to the **Variables** tab -> Click **New repository variable** -> name `GEMINI_MODEL` (e.g., `gemini-3.5-flash-lite`).
 
-The bot triggers automatically via cron at **00:00 UTC (07:00 AM UTC+7)** daily. You can also trigger it manually anytime by navigating to the **Actions** tab -> Selecting **Daily Hacker News Digest** -> Clicking **Run workflow**.
+The bot triggers automatically via cron at **00:17 UTC (07:17 AM UTC+7)** daily. You can also trigger it manually anytime by navigating to the **Actions** tab -> Selecting **Daily Hacker News Digest** -> Clicking **Run workflow**.
 
 ---
 

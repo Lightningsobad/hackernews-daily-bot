@@ -2,8 +2,8 @@ name: Daily Hacker News Digest
 
 on:
   schedule:
-    # 00:00 UTC corresponds to 07:00 AM UTC+7 (Vietnam Time)
-    - cron: '0 0 * * *'
+    # 00:17 UTC corresponds to 07:17 AM UTC+7 (Vietnam Time)
+    - cron: '17 0 * * *'
   workflow_dispatch: # Allows manual trigger from GitHub Actions tab
 
 jobs:

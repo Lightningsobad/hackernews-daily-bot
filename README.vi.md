@@ -7,7 +7,7 @@
 Một ứng dụng tự động hoá gọn nhẹ, chạy định kỳ hàng ngày hoàn toàn miễn phí trên **GitHub Actions** (chi phí server = 0đ) nhằm:
 1. Thu thập các bài viết nổi bật nhất về chủ đề **Trí tuệ nhân tạo (AI)** và **Lập trình (Programming)** trên Hacker News trong vòng 24 giờ qua.
 2. Tải nội dung bài viết và sử dụng **Google Gemini AI** để đọc hiểu, tóm tắt thành 2–3 gạch đầu dòng súc tích bằng tiếng Việt.
-3. Đóng gói và gửi bản tin tổng hợp đẹp mắt vào kênh hoặc nhóm Telegram của bạn vào 07:00 sáng mỗi ngày.
+3. Đóng gói và gửi bản tin tổng hợp đẹp mắt vào kênh hoặc nhóm Telegram của bạn vào 07:17 sáng mỗi ngày.
 
 ---
 
@@ -46,7 +46,7 @@ Sau khi đẩy mã nguồn lên GitHub repository của bạn:
    - `GEMINI_API_KEY`: API Key lấy từ Google AI Studio.
 4. *(Tùy chọn)* Nếu muốn đổi model AI sang phiên bản khác (mặc định là `gemini-3.8-flash`), bạn có thể vào tab **Variables** bên cạnh -> Thêm variable `GEMINI_MODEL` (ví dụ `gemini-3.5-flash-lite`).
 
-Bot sẽ tự động kích hoạt vào lúc **00:00 UTC (tức 07:00 sáng giờ Việt Nam)** mỗi ngày. Bạn cũng có thể kích hoạt chạy thử thủ công bất kỳ lúc nào bằng cách vào tab **Actions** trên GitHub -> Chọn workflow **Daily Hacker News Digest** -> Bấm **Run workflow**.
+Bot sẽ tự động kích hoạt vào lúc **00:17 UTC (tức 07:17 sáng giờ Việt Nam)** mỗi ngày. Bạn cũng có thể kích hoạt chạy thử thủ công bất kỳ lúc nào bằng cách vào tab **Actions** trên GitHub -> Chọn workflow **Daily Hacker News Digest** -> Bấm **Run workflow**.
 
 ---
 
