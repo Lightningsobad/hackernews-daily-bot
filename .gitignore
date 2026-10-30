@@ -49,3 +49,10 @@ htmlcov/
 # Superpowers scratch
 .superpowers/
 
+# Cloudflare Worker development
+node_modules/
+.wrangler/
+dist/
+.dev.vars
+.dev.vars.*
+
