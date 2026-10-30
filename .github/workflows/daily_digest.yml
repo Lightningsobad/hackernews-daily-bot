@@ -6,6 +6,10 @@ on:
     - cron: '17 0 * * *'
   workflow_dispatch: # Allows manual trigger from GitHub Actions tab
 
+concurrency:
+  group: daily-hackernews-broadcast
+  cancel-in-progress: false
+
 jobs:
   run-digest:
     runs-on: ubuntu-latest
@@ -29,6 +33,8 @@ jobs:
           TZ: 'Asia/Ho_Chi_Minh'
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          SUBSCRIBER_API_URL: ${{ secrets.SUBSCRIBER_API_URL }}
+          SUBSCRIBER_API_TOKEN: ${{ secrets.SUBSCRIBER_API_TOKEN }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-3.8-flash' }}
           MAX_STORIES: 5

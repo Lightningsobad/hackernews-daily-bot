@@ -9,6 +9,10 @@ Một ứng dụng tự động hoá gọn nhẹ, chạy định kỳ hàng ngà
 2. Tải nội dung bài viết và sử dụng **Google Gemini AI** để đọc hiểu, tóm tắt thành 2–3 gạch đầu dòng súc tích bằng tiếng Việt.
 3. Đóng gói và gửi bản tin tổng hợp đẹp mắt vào kênh hoặc nhóm Telegram của bạn vào 07:17 sáng mỗi ngày.
 
+**Nhận bản tin qua `/start`:** hỗ trợ tạo một bản tin chung rồi gửi cho nhiều
+người đăng ký. Worker nhận lệnh ngay và lưu danh sách trong D1, không gọi AI.
+Xem [hướng dẫn triển khai, kiểm thử và giới hạn](docs/subscriptions.md).
+
 ---
 
 ## 🚀 Hướng dẫn Lấy các Thông tin Bí mật (Secrets)
