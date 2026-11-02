@@ -11,6 +11,22 @@ Một ứng dụng tự động hoá gọn nhẹ, chạy định kỳ hàng ngà
 
 ---
 
+## 🌙 Lệnh `/sleep`
+
+Trong chat riêng với bot, gửi `/sleep` để xem giờ thức dậy sau **1–5 chu kỳ ngủ**.
+Mỗi chu kỳ được ước tính là **90 phút**, cộng mặc định **15 phút chờ vào giấc**.
+Kết quả hiển thị giờ Việt Nam (UTC+7) và ngày thức dậy để tránh nhầm khi qua nửa đêm.
+
+Ví dụ đi ngủ lúc **23:00**: bot gợi ý **00:45, 02:15, 03:45, 05:15 và 06:45 ngày hôm sau**.
+Đây là các mốc ước tính; các mốc ngủ ngắn không được xem là ngủ đủ một đêm.
+Lệnh không đặt báo thức và không thay đổi đăng ký bản tin.
+
+Phần nhận lệnh nằm trong Cloudflare Worker, cần triển khai bản Worker mới để sử dụng;
+thêm lệnh qua BotFather chỉ tạo mục trong menu. Xem hướng dẫn build, kiểm thử và
+triển khai trong [worker/README.md](worker/README.md).
+
+---
+
 ## 🚀 Hướng dẫn Lấy các Thông tin Bí mật (Secrets)
 
 ### 1. `TELEGRAM_BOT_TOKEN`

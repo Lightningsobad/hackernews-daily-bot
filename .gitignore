@@ -49,3 +49,9 @@ htmlcov/
 # Superpowers scratch
 .superpowers/
 
+# Cloudflare Worker local dependencies and state
+node_modules/
+.wrangler/
+.dev.vars
+.dev.vars.*
+

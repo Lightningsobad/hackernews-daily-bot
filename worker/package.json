@@ -1,0 +1,20 @@
+{
+  "name": "hackernews-subscriptions",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "build": "esbuild src/index.ts --bundle --format=esm --target=es2022 --sourcemap --outdir=dist"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "5.20261030.1",
+    "esbuild": "0.28.2",
+    "typescript": "7.0.2",
+    "wrangler": "4.156.0"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}
