@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "hackernews-subscriptions",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-30",
+  "workers_dev": true,
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "hackernews-subscribers",
+      "database_id": "6a1b4411-774b-4f60-b629-ecf9fca94a53",
+      "migrations_dir": "migrations"
+    }
+  ]
+}

@@ -8,6 +8,8 @@ from src.hn_client import fetch_top_stories
 from src.article_fetcher import fetch_article_text
 from src.summarizer import summarize_article
 from src.telegram_sender import format_digest_message, send_telegram_digest
+from src.telegram_sender import TelegramSender, DeliveryResult
+from src.subscribers import SubscriberClient, SubscriberError
 
 logging.basicConfig(
     level=logging.INFO,
@@ -31,6 +33,44 @@ def run_pipeline(dry_run: bool = False) -> int:
 
     effective_dry_run = config.dry_run
 
+    client = None
+    recipients = {}
+    if not effective_dry_run:
+        if config.subscriber_api_url:
+            try:
+                client = SubscriberClient(config.subscriber_api_url, config.subscriber_api_token)
+                recipients = {s.chat_id: s for s in client.list_active()}
+            except SubscriberError as error:
+                logger.error("Cannot load recipients: %s", error)
+                return 1
+        if config.telegram_chat_id:
+            recipients.setdefault(config.telegram_chat_id, None)
+        if not recipients:
+            logger.info("No recipients; skipping digest generation.")
+            return 0
+
+    def deliver(chunks):
+        if client is None:
+            success = send_telegram_digest(config.telegram_bot_token, config.telegram_chat_id, chunks)
+            logger.info("Broadcast: successful=%d skipped=0 failed=%d", int(success), int(not success))
+            return 0 if success else 1
+        sender = TelegramSender(config.telegram_bot_token)
+        success = skipped = failed = 0
+        for chat_id, subscriber in recipients.items():
+            result = sender.send(chat_id, chunks)
+            if result == DeliveryResult.SUCCESS:
+                success += 1
+            elif result == DeliveryResult.UNREACHABLE and subscriber is not None:
+                try:
+                    client.disable(subscriber)
+                    skipped += 1
+                except SubscriberError:
+                    failed += 1
+            else:
+                failed += 1
+        logger.info("Broadcast: successful=%d skipped=%d failed=%d", success, skipped, failed)
+        return 1 if failed else 0
+
     # Step 1: Fetch top stories from Hacker News
     logger.info(f"Fetching top {config.max_stories} stories from Hacker News...")
     stories = fetch_top_stories(max_stories=config.max_stories)
@@ -43,8 +83,7 @@ def run_pipeline(dry_run: bool = False) -> int:
             print("\n=== DRY RUN MODE: NO STORIES ===")
             print(empty_chunks[0])
             return 0
-        success = send_telegram_digest(config.telegram_bot_token, config.telegram_chat_id, empty_chunks)
-        return 0 if success else 1
+        return deliver(empty_chunks)
 
     # Step 2 & 3: Extract article text & summarize with Gemini
     stories_data: List[Dict[str, Any]] = []
@@ -88,19 +127,7 @@ def run_pipeline(dry_run: bool = False) -> int:
         print("\n" + "=" * 50 + "\n")
         return 0
 
-    logger.info(f"Sending digest to Telegram chat: {config.telegram_chat_id}...")
-    success = send_telegram_digest(
-        bot_token=config.telegram_bot_token,
-        chat_id=config.telegram_chat_id,
-        message_chunks=chunks,
-    )
-
-    if success:
-        logger.info("Daily digest successfully delivered to Telegram!")
-        return 0
-    else:
-        logger.error("Failed to deliver one or more message chunks to Telegram.")
-        return 1
+    return deliver(chunks)
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Hacker News Daily AI & Programming Telegram Bot")

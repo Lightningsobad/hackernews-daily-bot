@@ -1,6 +1,7 @@
 import os
 from dataclasses import dataclass
 from dotenv import load_dotenv
+from src.subscribers import valid_api_url
 
 class ConfigError(Exception):
     """Raised when configuration validation fails."""
@@ -14,6 +15,8 @@ class Config:
     gemini_model: str = "gemini-3.8-flash"
     max_stories: int = 5
     dry_run: bool = False
+    subscriber_api_url: str = ""
+    subscriber_api_token: str = ""
 
 def load_config(env_file: str | None = None, dry_run: bool | None = None) -> Config:
     """
@@ -33,6 +36,12 @@ def load_config(env_file: str | None = None, dry_run: bool | None = None) -> Con
 
     telegram_bot_token = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
     telegram_chat_id = os.getenv("TELEGRAM_CHAT_ID", "").strip()
+    subscriber_api_url = os.getenv("SUBSCRIBER_API_URL", "").strip().rstrip("/")
+    subscriber_api_token = os.getenv("SUBSCRIBER_API_TOKEN", "").strip()
+    if bool(subscriber_api_url) != bool(subscriber_api_token):
+        raise ConfigError("SUBSCRIBER_API_URL and SUBSCRIBER_API_TOKEN must be configured together.")
+    if subscriber_api_url and not valid_api_url(subscriber_api_url):
+        raise ConfigError("SUBSCRIBER_API_URL must be an HTTPS base URL without credentials or query.")
     gemini_api_key = os.getenv("GEMINI_API_KEY", "").strip()
     gemini_model = os.getenv("GEMINI_MODEL", "gemini-3.8-flash").strip() or "gemini-3.8-flash"
 
@@ -46,7 +55,7 @@ def load_config(env_file: str | None = None, dry_run: bool | None = None) -> Con
         missing = []
         if not telegram_bot_token:
             missing.append("TELEGRAM_BOT_TOKEN")
-        if not telegram_chat_id:
+        if not telegram_chat_id and not subscriber_api_url:
             missing.append("TELEGRAM_CHAT_ID")
         if not gemini_api_key:
             missing.append("GEMINI_API_KEY")
@@ -64,5 +73,7 @@ def load_config(env_file: str | None = None, dry_run: bool | None = None) -> Con
         gemini_model=gemini_model,
         max_stories=max_stories,
         dry_run=effective_dry_run,
+        subscriber_api_url=subscriber_api_url,
+        subscriber_api_token=subscriber_api_token,
     )
 

@@ -3,18 +3,20 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
-    "test": "node --test tests/*.test.ts",
+    "test": "node --test test/*.test.ts",
     "typecheck": "tsc --noEmit",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
     "build": "esbuild src/index.ts --bundle --format=esm --target=es2022 --sourcemap --outdir=dist"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "5.20261030.1",
-    "esbuild": "0.28.2",
-    "typescript": "7.0.2",
-    "wrangler": "4.156.0"
-  },
-  "engines": {
-    "node": ">=24"
+    "@cloudflare/workers-types": "^5.20261030.1",
+    "esbuild": "^0.28.2",
+    "typescript": "^7.0.2",
+    "wrangler": "^4.156.0"
   }
 }

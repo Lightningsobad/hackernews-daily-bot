@@ -114,9 +114,11 @@ async function webhook(request: Request, env: Env, context: Diagnostics): Promis
     try {
       const acknowledgement = await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chat_id: String(message.chat.id), text: active
-          ? "Bạn đã đăng ký nhận bản tin hằng ngày. Bản tin sẽ đến từ lượt gửi tiếp theo. Gõ /stop để hủy."
-          : "Bạn đã hủy đăng ký nhận bản tin. Gõ /start để đăng ký lại." }),
+        body: JSON.stringify({
+          chat_id: String(message.chat.id), text: active
+            ? "Bạn đã đăng ký nhận bản tin hằng ngày. Bản tin sẽ đến từ lượt gửi tiếp theo. Gõ /stop để hủy."
+            : "Bạn đã hủy đăng ký nhận bản tin. Gõ /start để đăng ký lại."
+        }),
         signal: AbortSignal.timeout(10_000), redirect: "manual",
       });
       if (!acknowledgement.ok) console.warn("Telegram acknowledgement failed");
@@ -148,7 +150,7 @@ async function handle(request: Request, env: Env, context: Diagnostics): Promise
   if (url.pathname === "/subscribers/disable" && request.method === "POST") {
     const data = await body(request);
     if (!data || typeof data.chat_id !== "string" || !/^[1-9]\d{0,19}$/.test(data.chat_id)
-        || !Number.isSafeInteger(data.version) || data.version < 1) {
+      || !Number.isSafeInteger(data.version) || data.version < 1) {
       return json({ error: "Invalid subscriber" }, 400);
     }
     const result = await env.DB.prepare(`

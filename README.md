@@ -1,5 +1,10 @@
 # ⚡️ Hacker News AI & Programming Daily Telegram Digest Bot
 
+**Subscriptions:** users can register with `/start` and unsubscribe with `/stop`.
+An optional Cloudflare Worker + D1 stores subscribers; the daily Python job
+generates one shared digest and broadcasts it without additional AI calls per user.
+See [deployment, configuration, tests, and limitations](docs/subscriptions.md).
+
 <p align="center">
   <strong>English</strong> | <a href="README.vi.md">Tiếng Việt</a>
 </p>
